@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Prueba Impresión Térmica 3nstar RPT008</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        
+        .btn:hover { background: #0056b3; }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #1e7e34; }
+        
+        .alert {
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>🖨️ Prueba de Impresión Térmica</h1>
+    <h2>3nstar RPT008 - 80mm</h2>
+    
+    <div class="alert">
+        <strong>Antes de probar:</strong><br>
+        1. Configurar Chrome: Ctrl+P → Más configuraciones → DESMARCAR "Encabezados y pies de página"<br>
+        2. Asegurar que la impresora esté encendida y con papel<br>
+        3. Permitir ventanas emergentes si el navegador las bloquea
+    </div>
+    
+    <button class="btn btn-success" onclick="testThermalPrint()">
+        🖨️ PROBAR IMPRESIÓN TÉRMICA
+    </button>
+    
+    <button class="btn" onclick="testDirectPrint()">
+        📄 Probar Impresión Directa
+    </button>
+    
+    <div id="status" class="status">
+        <strong>Estado:</strong> Listo para probar
+    </div>
+
+    <script>
+        function updateStatus(message, isError = false) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<strong>Estado:</strong> ${message}`;
+            statusDiv.style.borderLeftColor = isError ? '#dc3545' : '#007bff';
+            statusDiv.style.background = isError ? '#f8d7da' : '#f8f9fa';
+        }
+
+        function testThermalPrint() {
+            updateStatus('Iniciando prueba de impresión térmica...');
+            
+            try {
+                const printWindow = window.open('', '_blank', 'width=300,height=500,scrollbars=no,resizable=no');
+                
+                if (!printWindow) {
+                    updateStatus('❌ Error: Ventanas emergentes bloqueadas. Por favor permite las ventanas emergentes y vuelve a intentar.', true);
+                    return;
+                }
+                
+                updateStatus('✅ Ventana abierta, generando contenido...');
+                
+                const content = generateThermalContent();
+                printWindow.document.write(content);
+                printWindow.document.close();
+                
+                updateStatus('📝 Contenido generado, preparando impresión...');
+                
+                // Configurar impresión
+                printWindow.onload = function() {
+                    setTimeout(() => {
+                        updateStatus('🖨️ Enviando a impresora térmica...');
+                        
+                        try {
+                            printWindow.focus();
+                            printWindow.print();
+                            
+                            setTimeout(() => {
+                                printWindow.close();
+                                updateStatus('✅ ¡Impresión enviada correctamente! Verifica tu impresora 3nstar RPT008.');
+                            }, 2000);
+                            
+                        } catch (printError) {
+                            updateStatus(`❌ Error al imprimir: ${printError.message}`, true);
+                            printWindow.close();
+                        }
+                    }, 1000);
+                };
+                
+                // Timeout de seguridad
+                setTimeout(() => {
+                    if (!printWindow.closed) {
+                        printWindow.close();
+                        updateStatus('⏰ Timeout: La ventana se cerró automáticamente. Intenta de nuevo.', true);
+                    }
+                }, 15000);
+                
+            } catch (error) {
+                updateStatus(`❌ Error general: ${error.message}`, true);
+            }
+        }
+
+        function generateThermalContent() {
+            const now = new Date();
+            const formattedDate = now.toLocaleString('es-ES');
+            
+            return `
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Ticket Test</title>
+                    <style>
+                        @page {
+                            size: 80mm auto !important;
+                            margin: 0 !important;
+                        }
+                        
+                        * {
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            box-sizing: border-box !important;
+                        }
+                        
+                        html, body {
+                            font-family: 'Courier New', 'DejaVu Sans Mono', monospace !important;
+                            font-size: 12px !important;
+                            line-height: 1.4 !important;
+                            width: 80mm !important;
+                            color: #000 !important;
+                            background: #fff !important;
+                        }
+                        
+                        body {
+                            padding: 3mm !important;
+                        }
+                        
+                        .center { text-align: center !important; }
+                        .bold { font-weight: bold !important; }
+                        .small { font-size: 10px !important; }
+                        .large { font-size: 16px !important; }
+                        
+                        .separator {
+                            border-top: 1px dashed #000 !important;
+                            margin: 3mm 0 !important;
+                            width: 100% !important;
+                        }
+                        
+                        .line {
+                            border-top: 1px solid #000 !important;
+                            margin: 2mm 0 !important;
+                            width: 100% !important;
+                        }
+                        
+                        .row {
+                            display: flex !important;
+                            justify-content: space-between !important;
+                            align-items: flex-start !important;
+                            margin: 1mm 0 !important;
+                        }
+                        
+                        .item {
+                            margin: 2mm 0 !important;
+                        }
+                        
+                        .total-section {
+                            margin-top: 4mm !important;
+                            padding-top: 2mm !important;
+                            border-top: 1px solid #000 !important;
+                        }
+                        
+                        .grand-total {
+                            font-weight: bold !important;
+                            font-size: 14px !important;
+                            border-top: 1px solid #000 !important;
+                            border-bottom: 2px solid #000 !important;
+                            padding: 2mm 0 !important;
+                            margin: 2mm 0 !important;
+                        }
+                        
+                        @media print {
+                            * {
+                                -webkit-print-color-adjust: exact !important;
+                                print-color-adjust: exact !important;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <!-- Encabezado -->
+                    <div class="center">
+                        <div class="bold large">🏪 MI RESTAURANTE</div>
+                        <div class="small">Av. Ejemplo 123, Ciudad</div>
+                        <div class="small">Tel: +54 11 1234-5678</div>
+                        <div class="small">CUIT: 20-12345678-9</div>
+                    </div>
+                    
+                    <div class="separator"></div>
+                    
+                    <!-- Info del ticket -->
+                    <div class="center">
+                        <div class="bold">🎫 TICKET DE PRUEBA</div>
+                        <div class="small">Factura: B-00001-00000001</div>
+                        <div class="small">${formattedDate}</div>
+                    </div>
+                    
+                    <div class="separator"></div>
+                    
+                    <!-- Mesa y empleado -->
+                    <div class="row">
+                        <span>Mesa:</span>
+                        <span class="bold">Mesa 5</span>
+                    </div>
+                    <div class="row">
+                        <span>Empleado:</span>
+                        <span>Test User</span>
+                    </div>
+                    
+                    <div class="separator"></div>
+                    <div class="center bold">📋 PRODUCTOS</div>
+                    <div class="separator"></div>
+                    
+                    <!-- Productos -->
+                    <div class="item">
+                        <div class="row">
+                            <span class="bold">🍕 Pizza Margherita</span>
+                            <span class="bold">$31.00</span>
+                        </div>
+                        <div class="row">
+                            <span class="small">2 x $15.50</span>
+                            <span class="small">cocina</span>
+                        </div>
+                        <div class="small" style="font-style: italic; margin-top: 1mm;">
+                            ** Nota: Sin cebolla, extra queso **
+                        </div>
+                    </div>
+                    
+                    <div class="item">
+                        <div class="row">
+                            <span class="bold">🥤 Coca Cola 500ml</span>
+                            <span class="bold">$3.00</span>
+                        </div>
+                        <div class="row">
+                            <span class="small">1 x $3.00</span>
+                            <span class="small">barra</span>
+                        </div>
+                    </div>
+                    
+                    <div class="item">
+                        <div class="row">
+                            <span class="bold">🍟 Papas Fritas</span>
+                            <span class="bold">$8.00</span>
+                        </div>
+                        <div class="row">
+                            <span class="small">1 x $8.00</span>
+                            <span class="small">cocina</span>
+                        </div>
+                        <div class="small" style="font-style: italic; margin-top: 1mm;">
+                            ** Nota: Bien doradas **
+                        </div>
+                    </div>
+                    
+                    <!-- Totales -->
+                    <div class="total-section">
+                        <div class="row">
+                            <span>Subtotal:</span>
+                            <span>$42.00</span>
+                        </div>
+                        <div class="row">
+                            <span>Descuento:</span>
+                            <span>$0.00</span>
+                        </div>
+                        
+                        <div class="grand-total">
+                            <div class="row">
+                                <span>💰 TOTAL:</span>
+                                <span>$42.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pie -->
+                    <div style="margin-top: 4mm; padding-top: 2mm; border-top: 1px dashed #000; text-align: center;">
+                        <div class="small">🙏 ¡Gracias por su compra!</div>
+                        <div class="small">Sistema TPV - ${now.toLocaleDateString('es-ES')}</div>
+                        <div class="small" style="font-style: italic;">
+                            Documento no válido como comprobante fiscal
+                        </div>
+                        <div style="margin-top: 2mm;">
+                            <div class="small">🌐 www.mi-restaurante.com</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Espacio final -->
+                    <div style="height: 10mm;"></div>
+                </body>
+                </html>
+            `;
+        }
+
+        function testDirectPrint() {
+            updateStatus('Probando impresión directa...');
+            
+            const originalContent = document.body.innerHTML;
+            
+            document.body.innerHTML = `
+                <div style="font-family: 'Courier New', monospace; font-size: 12px; width: 80mm; padding: 2mm;">
+                    <div style="text-align: center; font-weight: bold; font-size: 16px;">PRUEBA DIRECTA</div>
+                    <div style="text-align: center;">${new Date().toLocaleString('es-ES')}</div>
+                    <div style="border-top: 1px dashed #000; margin: 3mm 0;"></div>
+                    <div>Producto de prueba: $10.00</div>
+                    <div style="border-top: 1px solid #000; margin: 2mm 0; padding-top: 2mm; font-weight: bold;">
+                        TOTAL: $10.00
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                window.print();
+                setTimeout(() => {
+                    document.body.innerHTML = originalContent;
+                    updateStatus('✅ Impresión directa completada');
+                }, 1000);
+            }, 500);
+        }
+
+        // Información inicial
+        window.onload = function() {
+            const isChrome = navigator.userAgent.includes('Chrome');
+            const supportsPopups = !!window.open;
+            
+            updateStatus(`🌐 Navegador: ${isChrome ? 'Chrome ✅' : 'Otro navegador ⚠️'} | Ventanas emergentes: ${supportsPopups ? 'Soportadas ✅' : 'Bloqueadas ❌'}`);
+        };
+    </script>
+</body>
+</html>

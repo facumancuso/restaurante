@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id               String   @id @default(cuid())
+  name             String
+  description      String?
+  costPrice        Decimal  @db.Decimal(10, 2)
+  salePrice        Decimal  @db.Decimal(10, 2)
+  stock            Int
+  supplier         String?
+  unitOfMeasure    UnitOfMeasure @default(unidad)
+  printingStation  PrintingStation @default(cocina)
+  allowPriceChange Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  categoryId       String
+  category         Category @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  products Product[]
+}
+
+enum UnitOfMeasure {
+  unidad
+  kg
+  litro
+}
+
+enum PrintingStation {
+  cocina
+  barra
+  ninguna
+}
