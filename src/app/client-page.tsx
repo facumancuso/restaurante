@@ -114,7 +114,7 @@ const printThermalTicket = (printData: any) => {
     
   } catch (error) {
     console.error('❌ Error en impresión:', error);
-    alert(`Error al imprimir: ${error.message}`);
+alert(`Error al imprimir: ${error instanceof Error ? error.message : String(error)}`);
   }
 };
 
