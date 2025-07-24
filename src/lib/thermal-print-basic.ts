@@ -20,14 +20,15 @@ export const printThermalReceipt = (
       injectThermalPrintStyles();
 
       // Insertar contenido en el área de impresión
-      const printArea =
-        document.querySelector('.thermal-print-area') ||
-        document.querySelector('.print-area');
-      if (printArea) {
-        printArea.innerHTML = printContent;
-        printArea.style.display = 'block';
-        printArea.style.visibility = 'visible';
-      }
+  const printArea = 
+  (document.querySelector('.thermal-print-area') || document.querySelector('.print-area')) as HTMLElement | null;
+
+if (printArea) {
+  printArea.innerHTML = printContent;
+  printArea.style.display = 'block';
+  printArea.style.visibility = 'visible';
+}
+
 
       // Configurar el evento de impresión
       const beforePrint = () => {
