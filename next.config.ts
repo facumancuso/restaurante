@@ -8,16 +8,16 @@ const nextConfig: NextConfig = {
     },
   },
   
+  // ✅ CAMBIO: serverComponentsExternalPackages movido aquí
+  serverExternalPackages: ['@prisma/client', 'prisma'],
+  
   // Configuraciones experimentales mínimas
   experimental: {
     // Optimizaciones básicas
     workerThreads: false,
     cpus: 1,
-    serverComponentsExternalPackages: ['@prisma/client', 'prisma'],
+    // ❌ REMOVIDO: serverComponentsExternalPackages (ya no va aquí)
   },
-  
-  // NO usar webpack cuando Turbopack está activo
-  // webpack: removido para evitar conflictos
   
   // Optimizaciones de imágenes
   images: {
