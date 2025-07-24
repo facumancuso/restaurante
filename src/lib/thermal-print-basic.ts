@@ -22,7 +22,6 @@ export const printThermalReceipt = (
       // Insertar contenido en el área de impresión
   const printArea = (document.querySelector('.thermal-print-area') || document.querySelector('.print-area')) as HTMLElement | null;
 
-
 if (printArea) {
   printArea.innerHTML = printContent;
   printArea.style.display = 'block';
@@ -349,23 +348,19 @@ export const printThermalSalesReport = (
 
     injectThermalPrintStyles();
 
-    const printArea =
-      document.querySelector('.thermal-print-area') ||
-      document.querySelector('.print-area');
-    if (printArea) {
-      printArea.innerHTML = reportContent;
-      printArea.style.display = 'block';
-      printArea.style.visibility = 'visible';
+const printArea = (document.querySelector('.thermal-print-area') || document.querySelector('.print-area')) as HTMLElement | null;
+if (printArea) {
+  printArea.innerHTML = reportContent;
+  printArea.style.display = 'block';
+  printArea.style.visibility = 'visible';
 
-      setTimeout(() => {
-        window.print();
-        printArea.innerHTML = '';
-        printArea.style.display = 'none';
-        removeThermalPrintStyles();
-      }, 300);
-    }
-  }
-};
+  setTimeout(() => {
+    window.print();
+    printArea.innerHTML = '';
+    printArea.style.display = 'none';
+    removeThermalPrintStyles();
+  }, 300);
+}
 
 // Generar contenido del reporte de ventas para impresión térmica
 const generateThermalSalesReport = (
