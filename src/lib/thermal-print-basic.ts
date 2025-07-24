@@ -6,6 +6,8 @@ import type {
   TicketConfig,
 } from '@/lib/types';
 
+import { useState, useCallback } from 'react';
+
 // Función principal de impresión térmica
 export const printThermalReceipt = (
   printData: PrintData,
@@ -68,7 +70,7 @@ if (printArea) {
 
 // Generar contenido HTML optimizado para impresión térmica
 // (Mantener las funciones auxiliares aquí, incluyendo generateThermalContent, injectThermalPrintStyles, removeThermalPrintStyles)
-
+// Generar contenido HTML optimizado para impresión térmica
 const generateThermalContent = (
   printData: PrintData,
   format: PrintFormat
@@ -85,7 +87,6 @@ const generateThermalContent = (
     employeeName,
     qrCodeUrl,
   } = printData;
-
 
   return `
     <div class="thermal-receipt">
@@ -112,21 +113,15 @@ const generateThermalContent = (
         }
       </div>
 
-
       <div class="thermal-separator"></div>
-
 
       <div class="thermal-center">
         <div class="thermal-bold">TICKET DE VENTA</div>
         <div class="thermal-small">Factura: ${invoice}</div>
-        <div class="thermal-small">${new Date(paidAt).toLocaleString(
-          'es-ES'
-        )}</div>
+        <div class="thermal-small">${new Date(paidAt).toLocaleString('es-ES')}</div>
       </div>
 
-
       <div class="thermal-separator"></div>
-
 
       <div class="thermal-row">
         <div class="thermal-row-left">Mesa/ID:</div>
@@ -141,13 +136,10 @@ const generateThermalContent = (
           : ''
       }
 
-
       <div class="thermal-separator"></div>
-
 
       <div class="thermal-center thermal-bold">DETALLE DEL PEDIDO</div>
       <div class="thermal-separator"></div>
-
 
       ${order
         .map(
@@ -155,14 +147,10 @@ const generateThermalContent = (
         <div class="thermal-item">
           <div class="thermal-row">
             <div class="thermal-row-left thermal-item-name">${item.name}</div>
-            <div class="thermal-row-right">$${(
-              item.salePrice * item.quantity
-            ).toFixed(2)}</div>
+            <div class="thermal-row-right">$${(item.salePrice * item.quantity).toFixed(2)}</div>
           </div>
           <div class="thermal-row">
-            <div class="thermal-row-left thermal-small">${item.quantity} x $${item.salePrice.toFixed(
-              2
-            )}</div>
+            <div class="thermal-row-left thermal-small">${item.quantity} x $${item.salePrice.toFixed(2)}</div>
             <div class="thermal-row-right"></div>
           </div>
           ${
@@ -174,7 +162,6 @@ const generateThermalContent = (
       `
         )
         .join('')}
-
 
       <div class="thermal-totals">
         <div class="thermal-total-line">
@@ -197,7 +184,6 @@ const generateThermalContent = (
         </div>
       </div>
 
-
       ${
         qrCodeUrl
           ? `
@@ -207,32 +193,24 @@ const generateThermalContent = (
           : ''
       }
 
-
       <div class="thermal-footer">
         ${settings.footerMessage ? `<div>${settings.footerMessage}</div>` : ''}
         <div>¡Gracias por su compra!</div>
-        <div class="thermal-small">Sistema TPV - ${new Date().toLocaleDateString(
-          'es-ES'
-        )}</div>
+        <div class="thermal-small">Sistema TPV - ${new Date().toLocaleDateString('es-ES')}</div>
       </div>
     </div>
   `;
 };
 
-
 // Inyectar estilos CSS específicos para impresión térmica
 const injectThermalPrintStyles = (): void => {
   const styleId = 'thermal-print-styles';
 
-
-  // Remover estilos existentes
   const existingStyle = document.getElementById(styleId);
   if (existingStyle) {
     existingStyle.remove();
   }
 
-
-  // Crear nuevos estilos
   const style = document.createElement('style');
   style.id = styleId;
   style.textContent = `
@@ -242,14 +220,14 @@ const injectThermalPrintStyles = (): void => {
         margin: 0 !important;
         padding: 0 !important;
       }
-      
+
       * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         box-shadow: none !important;
         text-shadow: none !important;
       }
-      
+
       html, body {
         width: 80mm !important;
         margin: 0 !important;
@@ -260,12 +238,12 @@ const injectThermalPrintStyles = (): void => {
         background: white !important;
         color: black !important;
       }
-      
+
       body > *:not(.thermal-print-area):not(.print-area) {
         display: none !important;
         visibility: hidden !important;
       }
-      
+
       .thermal-print-area,
       .print-area {
         display: block !important;
@@ -276,7 +254,7 @@ const injectThermalPrintStyles = (): void => {
         margin: 0 !important;
         padding: 2mm !important;
       }
-      
+
       .thermal-print-area *,
       .print-area * {
         max-width: 76mm !important;
@@ -285,10 +263,8 @@ const injectThermalPrintStyles = (): void => {
     }
   `;
 
-
   document.head.appendChild(style);
 };
-
 
 // Remover estilos de impresión térmica
 const removeThermalPrintStyles = (): void => {
@@ -298,10 +274,6 @@ const removeThermalPrintStyles = (): void => {
   }
 };
 
-
-// =================================================================
-// MOVER ESTA FUNCION ARRIBA, ANTES DE printThermalSalesReport
-// =================================================================
 // Generar contenido del reporte de ventas para impresión térmica
 const generateThermalSalesReport = (
   salesData: SalesReportData,
@@ -316,14 +288,13 @@ const generateThermalSalesReport = (
     ? dateRange.to.toLocaleDateString('es-ES')
     : '';
 
-
   return `
     <div class="center bold">
       ${settings?.businessName || 'NEGOCIO'}
     </div>
     <div class="center">REPORTE DE VENTAS</div>
     <div class="separator"></div>
-    
+
     <div class="row">
       <span>Fecha:</span>
       <span>${reportDate}${reportDateTo ? ` - ${reportDateTo}` : ''}</span>
@@ -332,11 +303,11 @@ const generateThermalSalesReport = (
       <span>Hora:</span>
       <span>${new Date().toLocaleTimeString('es-ES')}</span>
     </div>
-    
+
     <div class="separator"></div>
     <div class="center bold">RESUMEN</div>
     <div class="separator"></div>
-    
+
     <div class="row bold">
       <span>Total Pedidos:</span>
       <span>${salesSummary.totalOrders}</span>
@@ -349,11 +320,11 @@ const generateThermalSalesReport = (
       <span>Descuentos:</span>
       <span>$${salesSummary.totalDiscount.toFixed(2)}</span>
     </div>
-    
+
     <div class="separator"></div>
     <div class="center bold">DETALLE</div>
     <div class="separator"></div>
-    
+
     ${filteredOrders
       .slice(0, 20)
       .map(
@@ -375,7 +346,7 @@ const generateThermalSalesReport = (
     `
       )
       .join('')}
-    
+
     <div class="separator"></div>
     <div class="center small">
       Impreso: ${new Date().toLocaleString('es-ES')}
@@ -385,29 +356,24 @@ const generateThermalSalesReport = (
     </div>
   `;
 };
-// =================================================================
-// FIN DEL MOVIMIENTO
-// =================================================================
 
+// --- Funciones exportadas ---
 
-// Función principal de impresión térmica
+// Función principal de impresión térmica (ticket)
 export const printThermalReceipt = (
   printData: PrintData,
   format: PrintFormat = 'thermal-80mm'
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
     try {
-      // Preparar el contenido para impresión
+      // Preparar contenido
       const printContent = generateThermalContent(printData, format);
 
-
-      // Inyectar estilos CSS específicos para impresión térmica
+      // Inyectar estilos
       injectThermalPrintStyles();
 
-
-      // Insertar contenido en el área de impresión
+      // Obtener área de impresión y castear
       const printArea = (document.querySelector('.thermal-print-area') || document.querySelector('.print-area')) as HTMLElement | null;
-
 
       if (printArea) {
         printArea.innerHTML = printContent;
@@ -415,8 +381,7 @@ export const printThermalReceipt = (
         printArea.style.visibility = 'visible';
       }
 
-
-      // Configurar el evento de impresión
+      // Eventos antes y después de imprimir
       const beforePrint = () => {
         document.body.style.visibility = 'hidden';
         if (printArea) {
@@ -424,7 +389,6 @@ export const printThermalReceipt = (
           printArea.style.display = 'block';
         }
       };
-
 
       const afterPrint = () => {
         document.body.style.visibility = 'visible';
@@ -439,13 +403,9 @@ export const printThermalReceipt = (
         resolve();
       };
 
-
-      // Agregar event listeners
       window.addEventListener('beforeprint', beforePrint);
       window.addEventListener('afterprint', afterPrint);
 
-
-      // Ejecutar impresión después de un pequeño delay
       setTimeout(() => {
         window.print();
       }, 300);
@@ -462,20 +422,16 @@ export const printThermalSalesReport = (
   dateRange: DateRange | undefined,
   settings: TicketConfig | undefined
 ): void => {
-  // Ahora generateThermalSalesReport está definida antes, por lo que será accesible
   const reportContent = generateThermalSalesReport(salesData, dateRange, settings);
 
-
-  // Crear ventana de impresión
   const printWindow = window.open('', '_blank', 'width=300,height=600');
-
 
   if (printWindow) {
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
       <head>
-        <meta charset="UTF-8">
+        <meta charset="UTF-8" />
         <title>Reporte de Ventas</title>
         <style>
           @page {
@@ -494,9 +450,9 @@ export const printThermalSalesReport = (
           }
           .center { text-align: center; }
           .bold { font-weight: bold; }
-          .separator { 
-            border-top: 1px dashed #000; 
-            margin: 3mm 0; 
+          .separator {
+            border-top: 1px dashed #000;
+            margin: 3mm 0;
           }
           .row {
             display: flex;
@@ -511,12 +467,8 @@ export const printThermalSalesReport = (
       </body>
       </html>
     `);
-
-
     printWindow.document.close();
 
-
-    // Configurar impresión
     printWindow.onload = () => {
       setTimeout(() => {
         printWindow.print();
@@ -524,21 +476,16 @@ export const printThermalSalesReport = (
       }, 500);
     };
   } else {
-    // Fallback: usar ventana actual
     console.warn('No se pudo abrir ventana de impresión, usando ventana actual');
-
 
     injectThermalPrintStyles();
 
+    const printArea = (document.querySelector('.thermal-print-area') || document.querySelector('.print-area')) as HTMLElement | null;
 
-    const printArea =
-      (document.querySelector('.thermal-print-area') ||
-      document.querySelector('.print-area')) as HTMLElement | null; // Asegurarse del casteo aquí también
     if (printArea) {
       printArea.innerHTML = reportContent;
       printArea.style.display = 'block';
       printArea.style.visibility = 'visible';
-
 
       setTimeout(() => {
         window.print();
@@ -550,14 +497,10 @@ export const printThermalSalesReport = (
   }
 };
 
-
-// Hook para impresión térmica en React
-import { useState, useCallback } from 'react';
-
+// --- Hook React para impresión térmica ---
 
 export const useThermalPrint = () => {
   const [isPrinting, setIsPrinting] = useState(false);
-
 
   const printReceipt = useCallback(
     async (printData: PrintData, format: PrintFormat = 'thermal-80mm') => {
@@ -573,7 +516,6 @@ export const useThermalPrint = () => {
     []
   );
 
-
   const printSalesReport = useCallback(
     async (salesData: SalesReportData, dateRange?: DateRange, settings?: TicketConfig) => {
       setIsPrinting(true);
@@ -587,7 +529,6 @@ export const useThermalPrint = () => {
     },
     []
   );
-
 
   return {
     printReceipt,
