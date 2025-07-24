@@ -39,8 +39,8 @@ const getPreviousStatus = (currentStatus: KitchenStatus): { status: KitchenStatu
 };
 
 export default function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
-  const next = getNextStatus(order.kitchenStatus);
-  const prev = getPreviousStatus(order.kitchenStatus);
+  const next = order.kitchenStatus ? getNextStatus(order.kitchenStatus) : null;
+  const prev = order.kitchenStatus ? getPreviousStatus(order.kitchenStatus) : null;
 
   return (
     <Card>
