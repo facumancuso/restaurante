@@ -77,17 +77,17 @@ const generateThermalContent = (
       <div class="thermal-totals">
         <div class="thermal-total-line">
           <div class="thermal-row-left">Subtotal:</div>
-          <div class="thermal-row-right">$${subtotal.toFixed(2)}</div>
+          <div class="thermal-row-right">$${(subtotal ?? 0).toFixed(2)}</div>
         </div>
-        ${discountAmount > 0 ? `
+        ${(discountAmount ?? 0) > 0 ? `
           <div class="thermal-total-line">
             <div class="thermal-row-left">Descuento:</div>
-            <div class="thermal-row-right">-$${discountAmount.toFixed(2)}</div>
+            <div class="thermal-row-right">-$${(discountAmount ?? 0).toFixed(2)}</div>
           </div>` : ''}
         <div class="thermal-grand-total">
           <div class="thermal-row">
             <div class="thermal-row-left">TOTAL:</div>
-            <div class="thermal-row-right">$${total.toFixed(2)}</div>
+            <div class="thermal-row-right">$${(total ?? 0).toFixed(2)}</div>
           </div>
         </div>
       </div>
@@ -225,8 +225,8 @@ const generateThermalSalesReport = (
     <div class="separator"></div>
     ${filteredOrders.slice(0, 20).map(order => `
       <div class="row small">
-<span>#${order.invoiceNumber || order.id}</span>
-<span>$${(order.total ?? 0).toFixed(2)}</span>
+        <span>#${order.invoiceNumber || order.id}</span>
+        <span>$${(order.total ?? 0).toFixed(2)}</span>
       </div>
     `).join('')}
     <div class="separator"></div>
