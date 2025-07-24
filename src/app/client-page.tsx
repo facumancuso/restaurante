@@ -74,7 +74,7 @@ const printThermalTicket = (printData: any) => {
   } catch (error) {
     console.error('❌ Error en impresión:', error);
     const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
-    alert(`Error al imprimir: ${errorMessage}`); // ✅ LÍNEA 117 CORREGIDA
+    alert(`Error al imprimir: ${errorMessage}`); 
   }
 };
 
