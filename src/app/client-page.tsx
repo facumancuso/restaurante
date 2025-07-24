@@ -465,7 +465,7 @@ export default function PosClientPage({ initialProducts, initialCategories }: Po
     setActiveOrderId(orderId);
     if (orderId) {
       const selectedOrder = orders.find(o => o.id === orderId);
-      setCurrentOrderItems(selectedOrder?.items || []);
+      setCurrentOrderItems((selectedOrder?.items || []) as OrderItem[]);
     } else {
       setCurrentOrderItems([]);
     }
