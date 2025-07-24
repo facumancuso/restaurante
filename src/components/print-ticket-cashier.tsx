@@ -2,7 +2,9 @@
 
 import type { OrderItem, PrintData } from "@/lib/types";
 
-interface PrintTicketCashierProps extends Omit<PrintData, 'type' | 'order'> {}
+interface PrintTicketCashierProps extends Omit<PrintData, 'type'> {
+  order: PrintData['order']; // Esto agrega 'order' explícitamente
+}
 
 export default function PrintTicketCashier({ order, subtotal, total, discountAmount, paidAt, invoice, settings }: PrintTicketCashierProps) {
     const formattedDate = new Date(paidAt).toLocaleString('es-ES');
