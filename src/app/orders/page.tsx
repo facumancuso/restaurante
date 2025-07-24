@@ -3,7 +3,7 @@
 import { useOrders } from '@/hooks/use-orders';
 import OrderCard from '@/components/order-card';
 import type { Order } from '@/lib/types';
-import type { KITCHEN_STATUS } from '@/lib/types';
+import { KITCHEN_STATUS } from '@/lib/types'; // ✅ CORREGIDO: sin "type"
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -14,6 +14,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Trash2, Package, ArchiveRestore } from 'lucide-react';
 
 import { Skeleton } from '@/components/ui/skeleton';
+
+// ✅ AGREGADO: Definición de tipo KitchenStatus
+type KitchenStatus = 'pending' | 'in-progress' | 'ready' | 'completed';
 
 const statusColumns: { status: KitchenStatus; title: string }[] = [
     { status: 'pending', title: 'Pendientes' },
