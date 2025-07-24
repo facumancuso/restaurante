@@ -30,7 +30,7 @@ import type {
   Order, 
   PrintFormat,
   Discount,
-  PaymentMethod 
+  PAYMENT_METHODS
 } from '@/lib/types';
 
 interface PosClientPageProps {
@@ -456,7 +456,7 @@ export default function PosClientPage({ initialProducts, initialCategories }: Po
     }
   };
 
-  const handleConfirmPayment = (paymentMethod: PaymentMethod, amountPaid: number, discount: Discount) => {
+const handleConfirmPayment = (paymentMethod: string, amountPaid: number, discount: Discount) => {
     if (!activeOrderId) return;
     
     const paidOrder = payOrder(activeOrderId, discount);
