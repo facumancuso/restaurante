@@ -20,8 +20,8 @@ export const printThermalReceipt = (
       injectThermalPrintStyles();
 
       // Insertar contenido en el área de impresión
-  const printArea = 
-  (document.querySelector('.thermal-print-area') || document.querySelector('.print-area')) as HTMLElement | null;
+  const printArea = (document.querySelector('.thermal-print-area') || document.querySelector('.print-area')) as HTMLElement | null;
+
 
 if (printArea) {
   printArea.innerHTML = printContent;
