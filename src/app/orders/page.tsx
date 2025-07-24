@@ -2,8 +2,7 @@
 
 import { useOrders } from '@/hooks/use-orders';
 import OrderCard from '@/components/order-card';
-import type { Order } from '@/lib/types';
-// ❌ ELIMINADO: KITCHEN_STATUS no existe en @/lib/types
+import type { Order } from '@/lib/types'; // Importamos sólo Order
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -15,7 +14,7 @@ import { ArrowLeft, Trash2, Package, ArchiveRestore } from 'lucide-react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 
-// ✅ AGREGADO: Definición de tipo KitchenStatus
+// Definición local de KitchenStatus
 type KitchenStatus = 'pending' | 'in-progress' | 'ready' | 'completed';
 
 const statusColumns: { status: KitchenStatus; title: string }[] = [
@@ -37,7 +36,7 @@ export default function OrdersPage() {
     const handleRestoreOrder = (orderId: string) => {
         restoreOrder(orderId);
         toast({ title: 'Pedido Restaurado', description: 'El pedido ha vuelto a la lista de "Entregados".' });
-    }
+    };
 
     const activeOrders = orders.filter(o => !(o as any).isArchived);
     const archivedOrders = orders.filter(o => (o as any).isArchived);
@@ -45,23 +44,23 @@ export default function OrdersPage() {
     const renderSkeleton = () => (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-4">
             {statusColumns.map(({ status }) => (
-                 <div key={status} className="flex flex-col rounded-lg bg-card shadow-sm">
-                     <div className="p-4 border-b">
+                <div key={status} className="flex flex-col rounded-lg bg-card shadow-sm">
+                    <div className="p-4 border-b">
                         <Skeleton className="h-7 w-3/5" />
                     </div>
-                     <div className="flex-1 space-y-4 p-4">
+                    <div className="flex-1 space-y-4 p-4">
                         <div className="space-y-4">
                             <Skeleton className="h-28 w-full" />
                             <Skeleton className="h-28 w-full" />
                         </div>
                     </div>
-                 </div>
+                </div>
             ))}
         </div>
     );
 
     const renderActiveOrders = () => (
-         <div className="grid h-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid h-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {statusColumns.map(({ status, title }) => (
                 <div key={status} className="flex flex-col rounded-lg bg-card shadow-sm h-full">
                     <div className="p-4 border-b">
@@ -101,7 +100,7 @@ export default function OrdersPage() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                     {archivedOrders.length === 0 && (
+                    {archivedOrders.length === 0 && (
                         <TableRow>
                             <TableCell colSpan={5} className="text-center h-24">No hay pedidos archivados.</TableCell>
                         </TableRow>
@@ -112,7 +111,7 @@ export default function OrdersPage() {
                             <TableCell>{order.paidAt ? format(new Date(order.paidAt), 'Pp', { locale: es }) : 'N/A'}</TableCell>
                             <TableCell>{order.items.reduce((sum: number, item: any) => sum + item.quantity, 0)}</TableCell>
                             <TableCell className="text-right font-semibold">${order.total?.toFixed(2) ?? '0.00'}</TableCell>
-                             <TableCell className="text-right">
+                            <TableCell className="text-right">
                                 <Button variant="outline" size="sm" onClick={() => handleRestoreOrder(order.id)}>
                                     <ArchiveRestore className="mr-2 h-4 w-4" />
                                     Restaurar
@@ -133,7 +132,7 @@ export default function OrdersPage() {
                     <h1 className="text-3xl font-bold tracking-tight">Gestión de Cocina</h1>
                 </div>
                 <div className="flex items-center gap-4">
-                     <Button variant="outline" onClick={handleClearCompleted} disabled={!activeOrders.some(o => (o as any).kitchenStatus === 'completed')}>
+                    <Button variant="outline" onClick={handleClearCompleted} disabled={!activeOrders.some(o => (o as any).kitchenStatus === 'completed')}>
                         <Trash2 className="mr-2 h-4 w-4" />
                         Archivar Entregados
                     </Button>
