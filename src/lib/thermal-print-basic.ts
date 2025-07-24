@@ -225,7 +225,7 @@ const generateThermalSalesReport = (
     <div class="separator"></div>
     ${filteredOrders.slice(0, 20).map(order => `
       <div class="row small">
-        <span>#${order.invoice || order.id}</span>
+<span>#${order.invoiceNumber || order.id}</span>
         <span>$${order.total.toFixed(2)}</span>
       </div>
     `).join('')}
