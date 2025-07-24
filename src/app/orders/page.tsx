@@ -3,7 +3,7 @@
 import { useOrders } from '@/hooks/use-orders';
 import OrderCard from '@/components/order-card';
 import type { Order } from '@/lib/types';
-import { KITCHEN_STATUS } from '@/lib/types'; // ✅ CORREGIDO: sin "type"
+// ❌ ELIMINADO: KITCHEN_STATUS no existe en @/lib/types
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
