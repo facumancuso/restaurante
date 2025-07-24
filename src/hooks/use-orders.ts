@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -10,13 +9,20 @@ const ORDERS_STORAGE_KEY = 'restaurantOrders_v2';
 export function useOrders() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [ticketConfig] = useTicketConfig();
+    const [ticketConfig] = useTicketConfig(); // Si usas ticketConfig, asegúrate de que useTicketConfig devuelva un array [config, setConfig] o solo el config
 
     useEffect(() => {
         try {
             const savedOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
             if (savedOrders) {
-                setOrders(JSON.parse(savedOrders));
+                // Asegúrate de parsear correctamente y establecer los estados predeterminados
+                const parsedOrders: Order[] = JSON.parse(savedOrders);
+                setOrders(parsedOrders.map(order => ({
+                    ...order,
+                    kitchenStatus: order.kitchenStatus || 'pending', // Asegura un valor por defecto
+                    paymentStatus: order.paymentStatus || 'open', // Asegura un valor por defecto
+                    // Si createdAt está como number, asegúrate de que sea un Date si lo usas como tal en algún lado, pero en tu interfaz Order está como number
+                })));
             }
         } catch (error) {
             console.error("Failed to load orders from localStorage", error);
@@ -41,9 +47,11 @@ export function useOrders() {
             tableNumber,
             items,
             employeeName,
-            paymentStatus: 'open',
-            kitchenStatus: 'pending',
+            paymentStatus: 'open' as PaymentStatus, // Casting explícito si es necesario
+            kitchenStatus: 'pending' as KitchenStatus, // Casting explícito si es necesario
             createdAt: now,
+            updatedAt: now, // Asegurar que updatedAt esté inicializado
+            isArchived: false, // Valor por defecto
         };
         
         saveOrders([...orders, newOrder]);
@@ -54,7 +62,13 @@ export function useOrders() {
        const orderToUpdate = orders.find(o => o.id === orderId);
        if (!orderToUpdate) return undefined;
 
-       const updatedOrder = { ...orderToUpdate, items, kitchenStatus: 'pending' as KitchenStatus };
+       // Si se actualizan ítems, el estado de cocina puede volver a 'pending'
+       const updatedOrder = { 
+           ...orderToUpdate, 
+           items, 
+           kitchenStatus: 'pending' as KitchenStatus, 
+           updatedAt: Date.now() 
+       };
        
        const updatedOrders = orders.map(o => o.id === orderId ? updatedOrder : o);
        saveOrders(updatedOrders);
@@ -78,13 +92,14 @@ export function useOrders() {
 
        const paidOrder: Order = {
            ...orderToPay,
-           paymentStatus: 'paid',
-           kitchenStatus: 'completed',
+           paymentStatus: 'paid' as PaymentStatus, // Asegura el tipo correcto
+           kitchenStatus: 'completed' as KitchenStatus, // Asegura el tipo correcto
            paidAt: now,
            invoiceNumber: `INV-${now}`,
            discountAmount,
            subtotal,
-           total
+           total,
+           updatedAt: now,
        };
 
        const updatedOrders = orders.map(o => o.id === orderId ? paidOrder : o);
@@ -96,7 +111,7 @@ export function useOrders() {
 
     const updateKitchenStatus = useCallback((orderId: string, status: KitchenStatus) => {
         const updatedOrders = orders.map(order =>
-            order.id === orderId ? { ...order, kitchenStatus: status } : order
+            order.id === orderId ? { ...order, kitchenStatus: status, updatedAt: Date.now() } : order
         );
         saveOrders(updatedOrders);
     }, [orders]);
@@ -105,19 +120,59 @@ export function useOrders() {
         return orders.find(order => order.id === orderId);
     }, [orders]);
     
+    // Función para "archivar" órdenes completadas (en lugar de eliminarlas)
     const clearCompletedOrders = useCallback(() => {
-        const updatedOrders = orders.map(o => 
-            o.kitchenStatus === 'completed' && !o.isArchived ? { ...o, isArchived: true } : o
+        const updatedOrders = orders.map(o =>
+            o.kitchenStatus === 'completed' && !o.isArchived ? { ...o, isArchived: true, updatedAt: Date.now() } : o
         );
         saveOrders(updatedOrders);
     }, [orders]);
 
+    // Función para restaurar una orden archivada
     const restoreOrder = useCallback((orderId: string) => {
-        const updatedOrders = orders.map(order => 
-            order.id === orderId ? { ...order, isArchived: false, kitchenStatus: 'completed' as KitchenStatus } : order
+        const updatedOrders = orders.map(order =>
+            order.id === orderId ? { ...order, isArchived: false, kitchenStatus: 'completed' as KitchenStatus, updatedAt: Date.now() } : order
         );
         saveOrders(updatedOrders);
     }, [orders]);
 
-    return { orders, createOrder, updateOrderItems, payOrder, updateKitchenStatus, getOrder, clearCompletedOrders, restoreOrder, isLoaded };
+    // Puedes agregar más funciones aquí, como cancelarOrder o filtrar órdenes
+    const cancelOrder = useCallback((orderId: string): boolean => {
+        const orderToCancel = orders.find(o => o.id === orderId);
+        if (!orderToCancel) return false;
+
+        const updatedOrder = {
+            ...orderToCancel,
+            paymentStatus: 'cancelled' as PaymentStatus,
+            kitchenStatus: 'completed' as KitchenStatus, // O 'cancelled' si hay un estado específico
+            updatedAt: Date.now(),
+        };
+        const updatedOrders = orders.map(o => o.id === orderId ? updatedOrder : o);
+        saveOrders(updatedOrders);
+        return true;
+    }, [orders]);
+
+    // Funciones para obtener tipos específicos de órdenes (útil para UI)
+    const getOpenOrders = useCallback((): Order[] => {
+        return orders.filter(order => order.paymentStatus === 'open' && !order.isArchived);
+    }, [orders]);
+
+    const getPaidOrders = useCallback((): Order[] => {
+        return orders.filter(order => order.paymentStatus === 'paid' && !order.isArchived);
+    }, [orders]);
+
+    return { 
+        orders, 
+        createOrder, 
+        updateOrderItems, 
+        payOrder, 
+        updateKitchenStatus, 
+        getOrder, 
+        clearCompletedOrders, 
+        restoreOrder, 
+        isLoaded,
+        cancelOrder, // Exportar la nueva función
+        getOpenOrders, // Exportar la nueva función
+        getPaidOrders, // Exportar la nueva función
+    };
 }
