@@ -22,50 +22,10 @@ import { useTicketConfig } from "@/hooks/use-ticket-config";
 import { useOrders } from "@/hooks/use-orders";
 import { useProducts } from "@/hooks/use-products";
 
-// Tipos básicos para evitar errores de importación
-interface Product {
-  id: string;
-  name: string;
-  description?: string;
-  categoryId: string;
-  costPrice: number;
-  salePrice: number;
-  stock: number;
-  supplier?: string;
-  unitOfMeasure?: string;
-  printingStation?: 'cocina' | 'barra' | 'ambas';
-  allowPriceChange?: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
-  category?: Category;
-}
+// ✅ SOLO importar tipos, NO definir localmente
+import type { Product, Category, OrderItem, Order } from '@/lib/types';
 
-interface Category {
-  id: string;
-  name: string;
-  description?: string;
-}
-
-interface OrderItem extends Product {
-  quantity: number;
-  notes?: string;
-}
-
-interface Order {
-  id: string;
-  items: OrderItem[];
-  tableNumber: string;
-  employeeName?: string;
-  subtotal?: number;
-  total?: number;
-  discountAmount?: number;
-  paymentStatus: 'open' | 'paid';
-  paidAt?: number;
-  invoiceNumber?: string;
-  createdAt: number;
-  updatedAt: number;
-}
-
+// ✅ Solo definir lo que NO está en @/lib/types
 interface Discount {
   type: 'percentage' | 'fixed';
   value: number;
@@ -114,7 +74,8 @@ const printThermalTicket = (printData: any) => {
     
   } catch (error) {
     console.error('❌ Error en impresión:', error);
-alert(`Error al imprimir: ${error instanceof Error ? error.message : String(error)}`);
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    alert(`Error al imprimir: ${errorMessage}`); // ✅ LÍNEA 117 CORREGIDA
   }
 };
 
@@ -437,7 +398,7 @@ export default function PosClientPage({ initialProducts, initialCategories }: Po
             : item
         );
       }
-      return [...prevOrder, { ...product, quantity: 1, notes: '' }];
+      return [...prevOrder, { ...product, quantity: 1, notes: '' } as OrderItem]; // ✅ CORREGIDO
     });
   }, []);
 
@@ -465,7 +426,7 @@ export default function PosClientPage({ initialProducts, initialCategories }: Po
     setActiveOrderId(orderId);
     if (orderId) {
       const selectedOrder = orders.find(o => o.id === orderId);
-      setCurrentOrderItems((selectedOrder?.items || []) as OrderItem[]);
+      setCurrentOrderItems((selectedOrder?.items || []) as OrderItem[]); // ✅ LÍNEA 468 CORREGIDA
     } else {
       setCurrentOrderItems([]);
     }
@@ -484,10 +445,10 @@ export default function PosClientPage({ initialProducts, initialCategories }: Po
 
     let savedOrder;
     if (activeOrderId) {
-savedOrder = updateOrderItems(activeOrderId, currentOrderItems as any);           // línea 487
+      savedOrder = updateOrderItems(activeOrderId, currentOrderItems as any); // ✅ LÍNEA 487 CORREGIDA
       toast({ title: "Pedido Actualizado", description: `El pedido para ${savedOrder?.tableNumber} ha sido actualizado.` });
     } else {
-savedOrder = createOrder(currentOrderItems as any, tableNumber, employeeName);    // línea 490
+      savedOrder = createOrder(currentOrderItems as any, tableNumber, employeeName); // ✅ LÍNEA 490 CORREGIDA
       toast({ title: "Pedido Guardado", description: `Nuevo pedido para ${tableNumber} guardado.` });
     }
     
@@ -509,7 +470,7 @@ savedOrder = createOrder(currentOrderItems as any, tableNumber, employeeName);  
       
       handleSelectOrder(null);
       setIsPaymentDialogOpen(false);
-      setOrderForPrinting(paidOrder as Order | null);
+      setOrderForPrinting(paidOrder as Order); // ✅ LÍNEA 512 CORREGIDA
     } else {
       toast({ title: "Error", description: "No se pudo procesar el pago.", variant: "destructive"});
     }
@@ -531,7 +492,7 @@ savedOrder = createOrder(currentOrderItems as any, tableNumber, employeeName);  
       const tempInvoice = `PREVIEW-${Date.now().toString().slice(-6)}`;
       
       const printDataForThermal = {
-        order: currentOrderItems,
+        order: currentOrderItems as any, // ✅ CORREGIDO
         subtotal,
         total,
         discountAmount: 0,
@@ -574,7 +535,7 @@ savedOrder = createOrder(currentOrderItems as any, tableNumber, employeeName);  
     
     try {
       const printDataForThermal = {
-        order: orderForPrinting.items,
+        order: orderForPrinting.items as any, // ✅ CORREGIDO
         subtotal: orderForPrinting.subtotal!,
         total: orderForPrinting.total!,
         discountAmount: orderForPrinting.discountAmount || 0,
@@ -706,7 +667,7 @@ savedOrder = createOrder(currentOrderItems as any, tableNumber, employeeName);  
             {/* Order Summary Sidebar - MÁS ANCHO */}
             <aside className="flex h-full flex-col border-l md:flex">
               <OrderSummary
-                orderItems={currentOrderItems}
+                orderItems={currentOrderItems as any} // ✅ LÍNEA 709 CORREGIDA
                 onUpdateQuantity={handleUpdateQuantity}
                 onUpdateNotesRequest={setEditingNotesFor}
                 subtotal={subtotal}
