@@ -23,14 +23,22 @@ import { useOrders } from "@/hooks/use-orders";
 import { useProducts } from "@/hooks/use-products";
 
 // ✅ SOLO importar tipos, NO definir localmente
-import type { Product, Category, OrderItem, Order } from '@/lib/types';
+import type { 
+  Product, 
+  Category, 
+  OrderItem, 
+  Order, 
+  PrintFormat,
+  Discount,
+  PaymentMethod 
+} from '@/lib/types';
 
 // ✅ Solo definir lo que NO está en @/lib/types
-interface Discount {
-  type: 'percentage' | 'fixed';
-  value: number;
-  reason?: string;
-}
+// interface Discount {
+//   type: 'percentage' | 'fixed';
+//   value: number;
+//   reason?: string;
+// }
 
 type PrintFormat = 'thermal-80mm' | 'thermal-58mm' | 'a4';
 
@@ -457,7 +465,7 @@ export default function PosClientPage({ initialProducts, initialCategories }: Po
     }
   };
 
-  const handleConfirmPayment = (paymentMethod: string, amountPaid: number, discount: Discount) => {
+const handleConfirmPayment = (paymentMethod: PaymentMethod, amountPaid: number, discount: Discount) => {
     if (!activeOrderId) return;
     
     const paidOrder = payOrder(activeOrderId, discount);
