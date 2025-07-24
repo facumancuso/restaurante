@@ -124,7 +124,7 @@ const generateOptimizedThermalHTML = (printData: PrintData): string => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Ticket - ${invoice}</title>
+        <title>Ticket - ${escapeHtml(invoice || 'N/A')}</title>
         ${getThermalPrintStyles()}
     </head>
     <body>
@@ -378,7 +378,6 @@ const getThermalPrintStyles = (): string => `
 /**
  * Generar encabezado del recibo - MEJORADO
  */
-// Generar encabezado del recibo - MEJORADO
 const generateReceiptHeader = (settings: TicketConfig): string => `
     <div class="thermal-header">
         ${settings.businessName || settings.restaurantName ? `<div class="thermal-business-name">${escapeHtml(settings.businessName || settings.restaurantName || '')}</div>` : ''}
@@ -387,6 +386,7 @@ const generateReceiptHeader = (settings: TicketConfig): string => `
         ${settings.businessEmail ? `<div class="thermal-business-info">${escapeHtml(settings.businessEmail)}</div>` : ''}
     </div>
 `;
+
 /**
  * Generar información del recibo - MEJORADO
  */
@@ -399,7 +399,7 @@ const generateReceiptInfo = (
     <div class="thermal-separator"></div>
     <div class="thermal-center">
         <div class="thermal-bold">TICKET DE VENTA</div>
-        <div class="thermal-invoice-number">Factura: ${escapeHtml(invoice)}</div>
+        <div class="thermal-invoice-number">Factura: ${escapeHtml(invoice || 'N/A')}</div>
         <div class="thermal-small thermal-bold">${new Date(paidAt).toLocaleString('es-ES')}</div>
     </div>
     <div class="thermal-separator"></div>
@@ -425,7 +425,7 @@ const generateOrderDetails = (order: PrintData['order']): string =>
     order.map(item => `
         <div class="thermal-item">
             <div class="thermal-row">
-                <div class="thermal-row-left thermal-item-name">${escapeHtml(item.name)}</div>
+                <div class="thermal-row-left thermal-item-name">${escapeHtml(item.name || 'Producto Desconocido')}</div>
                 <div class="thermal-row-right thermal-price">$${(item.salePrice * item.quantity).toFixed(2)}</div>
             </div>
             <div class="thermal-row">
@@ -467,7 +467,7 @@ const generateTotals = (subtotal: number, total: number, discountAmount: number)
  */
 const generateQRCode = (qrCodeUrl: string): string => `
     <div class="thermal-center">
-        <img src="${qrCodeUrl}" alt="QR Code" class="thermal-qr" onerror="this.style.display='none'" />
+        <img src="${escapeHtml(qrCodeUrl)}" alt="QR Code" class="thermal-qr" onerror="this.style.display='none'" />
     </div>
 `;
 
@@ -476,7 +476,7 @@ const generateQRCode = (qrCodeUrl: string): string => `
  */
 const generateReceiptFooter = (settings: TicketConfig): string => `
     <div class="thermal-footer">
-        ${settings.footerMessage || settings.thankYouMessage ? `<div class="thermal-bold">${escapeHtml(settings.footerMessage || settings.thankYouMessage)}</div>` : ''}
+        ${settings.footerMessage || settings.thankYouMessage ? `<div class="thermal-bold">${escapeHtml(settings.footerMessage || settings.thankYouMessage || '')}</div>` : ''}
         <div class="thermal-bold">¡Gracias por su compra!</div>
         <div class="thermal-small">Sistema TPV - ${new Date().toLocaleDateString('es-ES')}</div>
     </div>
@@ -609,14 +609,14 @@ const generateThermalSalesReport = (
 
   const reportContent = `
     <div class="thermal-center thermal-bold">
-      ${settings?.businessName || settings?.restaurantName || 'NEGOCIO'}
+      ${escapeHtml(settings?.businessName || settings?.restaurantName || 'NEGOCIO')}
     </div>
     <div class="thermal-center thermal-bold">REPORTE DE VENTAS</div>
     <div class="thermal-separator"></div>
     
     <div class="thermal-row">
       <span class="thermal-bold">Fecha:</span>
-      <span class="thermal-bold">${reportDate}${reportDateTo ? ` - ${reportDateTo}` : ''}</span>
+      <span class="thermal-bold">${escapeHtml(reportDate)}${reportDateTo ? ` - ${escapeHtml(reportDateTo)}` : ''}</span>
     </div>
     <div class="thermal-row">
       <span class="thermal-bold">Hora:</span>
@@ -646,12 +646,12 @@ const generateThermalSalesReport = (
     
     ${filteredOrders.slice(0, 20).map(order => `
       <div class="thermal-row thermal-small">
-        <span class="thermal-bold">#${order.invoiceNumber?.slice(-6) || 'N/A'}</span>
+        <span class="thermal-bold">#${escapeHtml(order.invoiceNumber?.slice(-6) || 'N/A')}</span>
         <span class="thermal-bold">${new Date(order.paidAt).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}</span>
       </div>
       <div class="thermal-row thermal-small">
-        <span>Mesa: ${order.tableNumber}</span>
-        <span class="thermal-price">$${order.total?.toFixed(2) || '0.00'}</span>
+        <span>Mesa: ${escapeHtml(order.tableNumber || 'N/A')}</span>
+        <span class="thermal-price">$${(order.total || 0).toFixed(2)}</span>
       </div>
       <div style="margin: 1mm 0; border-bottom: 1px dotted #000;"></div>
     `).join('')}
