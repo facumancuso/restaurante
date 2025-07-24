@@ -1,9 +1,9 @@
-
 'use client';
 
 import { useOrders } from '@/hooks/use-orders';
 import OrderCard from '@/components/order-card';
-import type { KitchenStatus, Order } from '@/lib/types';
+import type { Order } from '@/lib/types';
+import type { KITCHEN_STATUS } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
