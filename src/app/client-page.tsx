@@ -674,7 +674,7 @@ export default function PosClientPage({ initialProducts, initialCategories }: Po
                 total={total}
                 onPay={() => setIsPaymentDialogOpen(true)}
                 printFormat={printFormat}
-                onPrintFormatChange={(format: PrintFormat) => setPrintFormat(format)}
+                onPrintFormatChange={(format: any) => setPrintFormat(format)}
                 openOrders={openOrders}
                 activeOrderId={activeOrderId}
                 onSelectOrder={handleSelectOrder}
