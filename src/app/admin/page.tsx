@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from "react";
@@ -53,9 +52,11 @@ export default function AdminPage() {
 
   const handleSaveProduct = async (values: ProductFormData) => {
     if (productToEdit) {
-      await updateProduct({ ...productToEdit, ...values });
+      // ✅ CORREGIDO: Cast del objeto completo para evitar errores de tipo
+      await updateProduct({ ...productToEdit, ...values } as Product);
     } else {
-      await addProduct(values);
+      // ✅ CORREGIDO: Cast para addProduct también
+      await addProduct(values as any);
     }
     handleCloseForm();
   };
