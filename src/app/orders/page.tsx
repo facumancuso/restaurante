@@ -39,8 +39,8 @@ export default function OrdersPage() {
         toast({ title: 'Pedido Restaurado', description: 'El pedido ha vuelto a la lista de "Entregados".' });
     }
 
-    const activeOrders = orders.filter(o => !o.isArchived);
-    const archivedOrders = orders.filter(o => o.isArchived);
+    const activeOrders = orders.filter(o => !(o as any).isArchived);
+    const archivedOrders = orders.filter(o => (o as any).isArchived);
 
     const renderSkeleton = () => (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-4">
@@ -69,7 +69,7 @@ export default function OrdersPage() {
                     </div>
                     <div className="flex-1 space-y-4 p-4 overflow-y-auto bg-muted/20">
                         {activeOrders
-                            .filter(order => order.kitchenStatus === status)
+                            .filter(order => (order as any).kitchenStatus === status)
                             .sort((a, b) => a.createdAt - b.createdAt)
                             .map(order => (
                                 <OrderCard
@@ -79,7 +79,7 @@ export default function OrdersPage() {
                                 />
                             ))
                         }
-                        {activeOrders.filter(order => order.kitchenStatus === status).length === 0 && (
+                        {activeOrders.filter(order => (order as any).kitchenStatus === status).length === 0 && (
                             <p className="text-sm text-center text-muted-foreground pt-4">No hay pedidos en este estado.</p>
                         )}
                     </div>
@@ -106,7 +106,7 @@ export default function OrdersPage() {
                             <TableCell colSpan={5} className="text-center h-24">No hay pedidos archivados.</TableCell>
                         </TableRow>
                     )}
-                    {archivedOrders.sort((a, b) => (b.paidAt ?? 0) - (a.paidAt ?? 0)).map((order: Order) => (
+                    {archivedOrders.sort((a, b) => (b.paidAt ?? 0) - (a.paidAt ?? 0)).map((order: any) => (
                         <TableRow key={order.id}>
                             <TableCell className="font-medium">{order.tableNumber}</TableCell>
                             <TableCell>{order.paidAt ? format(new Date(order.paidAt), 'Pp', { locale: es }) : 'N/A'}</TableCell>
@@ -133,7 +133,7 @@ export default function OrdersPage() {
                     <h1 className="text-3xl font-bold tracking-tight">Gestión de Cocina</h1>
                 </div>
                 <div className="flex items-center gap-4">
-                     <Button variant="outline" onClick={handleClearCompleted} disabled={!activeOrders.some(o => o.kitchenStatus === 'completed')}>
+                     <Button variant="outline" onClick={handleClearCompleted} disabled={!activeOrders.some(o => (o as any).kitchenStatus === 'completed')}>
                         <Trash2 className="mr-2 h-4 w-4" />
                         Archivar Entregados
                     </Button>
