@@ -12,6 +12,7 @@ import { es } from 'date-fns/locale';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Trash2, Package, ArchiveRestore } from 'lucide-react';
+
 import { Skeleton } from '@/components/ui/skeleton';
 
 const statusColumns: { status: KitchenStatus; title: string }[] = [
