@@ -110,7 +110,7 @@ export default function OrdersPage() {
                         <TableRow key={order.id}>
                             <TableCell className="font-medium">{order.tableNumber}</TableCell>
                             <TableCell>{order.paidAt ? format(new Date(order.paidAt), 'Pp', { locale: es }) : 'N/A'}</TableCell>
-                            <TableCell>{order.items.reduce((sum, item) => sum + item.quantity, 0)}</TableCell>
+                            <TableCell>{order.items.reduce((sum: number, item: any) => sum + item.quantity, 0)}</TableCell>
                             <TableCell className="text-right font-semibold">${order.total?.toFixed(2) ?? '0.00'}</TableCell>
                              <TableCell className="text-right">
                                 <Button variant="outline" size="sm" onClick={() => handleRestoreOrder(order.id)}>
