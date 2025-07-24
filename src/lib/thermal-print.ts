@@ -378,15 +378,15 @@ const getThermalPrintStyles = (): string => `
 /**
  * Generar encabezado del recibo - MEJORADO
  */
+// Generar encabezado del recibo - MEJORADO
 const generateReceiptHeader = (settings: TicketConfig): string => `
     <div class="thermal-header">
-        ${settings.businessName || settings.restaurantName ? `<div class="thermal-business-name">${escapeHtml(settings.businessName || settings.restaurantName)}</div>` : ''}
-        ${settings.businessAddress || settings.address ? `<div class="thermal-business-info">${escapeHtml(settings.businessAddress || settings.address)}</div>` : ''}
+        ${settings.businessName || settings.restaurantName ? `<div class="thermal-business-name">${escapeHtml(settings.businessName || settings.restaurantName || '')}</div>` : ''}
+        ${settings.businessAddress || settings.address ? `<div class="thermal-business-info">${escapeHtml(settings.businessAddress || settings.address || '')}</div>` : ''}
         ${settings.businessPhone ? `<div class="thermal-business-info">Tel: ${escapeHtml(settings.businessPhone)}</div>` : ''}
         ${settings.businessEmail ? `<div class="thermal-business-info">${escapeHtml(settings.businessEmail)}</div>` : ''}
     </div>
 `;
-
 /**
  * Generar información del recibo - MEJORADO
  */
