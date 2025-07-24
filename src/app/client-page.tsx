@@ -484,10 +484,10 @@ export default function PosClientPage({ initialProducts, initialCategories }: Po
 
     let savedOrder;
     if (activeOrderId) {
-      savedOrder = updateOrderItems(activeOrderId, currentOrderItems);
+savedOrder = updateOrderItems(activeOrderId, currentOrderItems as any);           // línea 487
       toast({ title: "Pedido Actualizado", description: `El pedido para ${savedOrder?.tableNumber} ha sido actualizado.` });
     } else {
-      savedOrder = createOrder(currentOrderItems, tableNumber, employeeName);
+savedOrder = createOrder(currentOrderItems as any, tableNumber, employeeName);    // línea 490
       toast({ title: "Pedido Guardado", description: `Nuevo pedido para ${tableNumber} guardado.` });
     }
     
