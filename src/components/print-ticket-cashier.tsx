@@ -1,9 +1,9 @@
 "use client";
 
-import type { OrderItem, PrintData } from "@/lib/types";
+import type { PrintData } from "@/lib/types";
 
 interface PrintTicketCashierProps extends Omit<PrintData, 'type'> {
-  order: PrintData['order']; // Esto agrega 'order' explícitamente
+  order: PrintData['order']; // Agregamos order explícitamente
 }
 
 export default function PrintTicketCashier({ order, subtotal, total, discountAmount, paidAt, invoice, settings }: PrintTicketCashierProps) {
