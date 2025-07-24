@@ -509,7 +509,7 @@ savedOrder = createOrder(currentOrderItems as any, tableNumber, employeeName);  
       
       handleSelectOrder(null);
       setIsPaymentDialogOpen(false);
-      setOrderForPrinting(paidOrder);
+      setOrderForPrinting(paidOrder as Order | null);
     } else {
       toast({ title: "Error", description: "No se pudo procesar el pago.", variant: "destructive"});
     }
