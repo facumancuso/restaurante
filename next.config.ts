@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
     // Optimizaciones básicas
     workerThreads: false,
     cpus: 1,
+    serverComponentsExternalPackages: ['@prisma/client', 'prisma'],
   },
   
   // NO usar webpack cuando Turbopack está activo
