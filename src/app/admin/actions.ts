@@ -1,4 +1,3 @@
-
 'use server'
 
 import prisma from '@/lib/db'
@@ -55,8 +54,8 @@ export async function addProduct(productData: Omit<Product, 'id' | 'createdAt' |
               salePrice: new Prisma.Decimal(productData.salePrice.toFixed(2)),
               stock: productData.stock,
               supplier: productData.supplier,
-              unitOfMeasure: productData.unitOfMeasure as any,
-              printingStation: productData.printingStation,
+              unitOfMeasure: productData.unitOfMeasure as any, // ✅ CORREGIDO
+              printingStation: productData.printingStation as any, // ✅ CORREGIDO
               allowPriceChange: productData.allowPriceChange,
             }
         });
@@ -82,8 +81,8 @@ export async function updateProduct(productData: Product): Promise<ActionRespons
               salePrice: new Prisma.Decimal(productData.salePrice.toFixed(2)),
               stock: productData.stock,
               supplier: productData.supplier,
-              unitOfMeasure: productData.unitOfMeasure as any,
-              printingStation: productData.printingStation,
+              unitOfMeasure: productData.unitOfMeasure as any, // ✅ CORREGIDO
+              printingStation: productData.printingStation as any, // ✅ CORREGIDO
               allowPriceChange: productData.allowPriceChange,
             }
         });
