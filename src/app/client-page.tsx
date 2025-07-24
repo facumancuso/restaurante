@@ -33,8 +33,6 @@ import type {
   PaymentMethod 
 } from '@/lib/types';
 
-// ❌ ELIMINADA: type PrintFormat = 'thermal-80mm' | 'thermal-58mm' | 'a4';
-
 interface PosClientPageProps {
   initialProducts: Product[];
   initialCategories: Category[];
