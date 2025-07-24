@@ -33,14 +33,7 @@ import type {
   PaymentMethod 
 } from '@/lib/types';
 
-// ✅ Solo definir lo que NO está en @/lib/types
-// interface Discount {
-//   type: 'percentage' | 'fixed';
-//   value: number;
-//   reason?: string;
-// }
-
-type PrintFormat = 'thermal-80mm' | 'thermal-58mm' | 'a4';
+// ❌ ELIMINADA: type PrintFormat = 'thermal-80mm' | 'thermal-58mm' | 'a4';
 
 interface PosClientPageProps {
   initialProducts: Product[];
@@ -465,7 +458,7 @@ export default function PosClientPage({ initialProducts, initialCategories }: Po
     }
   };
 
-const handleConfirmPayment = (paymentMethod: PaymentMethod, amountPaid: number, discount: Discount) => {
+  const handleConfirmPayment = (paymentMethod: PaymentMethod, amountPaid: number, discount: Discount) => {
     if (!activeOrderId) return;
     
     const paidOrder = payOrder(activeOrderId, discount);
