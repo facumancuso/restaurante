@@ -1,5 +1,4 @@
-
-"use client"
+"use client";
 
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -28,7 +27,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import type { Product, Category } from "@/lib/types";
-import { UnitOfMeasure, PrintingStation } from "@prisma/client";
 
 export const productSchema = z.object({
   name: z.string().min(3, "El nombre debe tener al menos 3 caracteres."),
@@ -38,8 +36,8 @@ export const productSchema = z.object({
   salePrice: z.coerce.number().min(0, "El precio de venta no puede ser negativo."),
   stock: z.coerce.number().int("El stock debe ser un número entero.").min(0, "El stock no puede ser negativo."),
   supplier: z.string().optional(),
-  unitOfMeasure: z.nativeEnum(UnitOfMeasure),
-  printingStation: z.nativeEnum(PrintingStation),
+  unitOfMeasure: z.enum(["unidad", "kg", "litro"]),
+  printingStation: z.enum(["cocina", "barra", "ninguna"]),
   allowPriceChange: z.boolean(),
 });
 
@@ -53,6 +51,21 @@ interface ProductFormProps {
   categories: Category[];
 }
 
+// Función para normalizar unitOfMeasure a valores permitidos o undefined
+function normalizeUnitOfMeasure(value: string | undefined): "unidad" | "kg" | "litro" | undefined {
+  if (value === "unidad" || value === "kg" || value === "litro") {
+    return value;
+  }
+  return undefined;
+}
+
+// Función para normalizar printingStation a valores permitidos o undefined
+function normalizePrintingStation(value: string | undefined): "cocina" | "barra" | "ninguna" | undefined {
+  if (value === "cocina" || value === "barra" || value === "ninguna") {
+    return value;
+  }
+  return undefined;
+}
 
 export default function ProductForm({ isOpen, onClose, onSave, productToEdit, categories }: ProductFormProps) {
   
@@ -81,6 +94,12 @@ export default function ProductForm({ isOpen, onClose, onSave, productToEdit, ca
           salePrice: Number(productToEdit.salePrice),
           description: productToEdit.description ?? "",
           supplier: productToEdit.supplier ?? "",
+          unitOfMeasure: normalizeUnitOfMeasure(productToEdit.unitOfMeasure),
+          printingStation: normalizePrintingStation(productToEdit.printingStation),
+          allowPriceChange: productToEdit.allowPriceChange ?? false,
+          stock: productToEdit.stock ?? 0,
+          categoryId: productToEdit.categoryId,
+          name: productToEdit.name,
         });
       } else {
         form.reset({
@@ -198,7 +217,7 @@ export default function ProductForm({ isOpen, onClose, onSave, productToEdit, ca
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Unidad de Medida</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                                 <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
                                 <SelectContent>
                                     <SelectItem value="unidad">Unidad</SelectItem>
@@ -229,7 +248,7 @@ export default function ProductForm({ isOpen, onClose, onSave, productToEdit, ca
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Estación de Impresión</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                                 <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
                                 <SelectContent>
                                     <SelectItem value="cocina">Cocina</SelectItem>
